@@ -9,3 +9,9 @@ url_encode_test_() ->
     ?_assertMatch("%C2%A2", erlcloud_http:url_encode("¢")),
     ?_assertMatch("%F0%A1%81%AF%20%F0%A1%81%B6", erlcloud_http:url_encode("𡁯 𡁶"))
   ].
+
+url_encode_2_test_() ->
+  [
+    %% something like "20€" from crash.log
+    ?_assertMatch("20%E2%82%AC", erlcloud_http:url_encode([50,48,226,130,172]))
+  ].
