@@ -38,8 +38,9 @@ url_encode([Char|String], Accum)
        Char =:= $-; Char =:= $_;
        Char =:= $.; Char =:= $~ ->
     url_encode(String, [Char|Accum]);
-url_encode([Char|String], Accum) ->
-    url_encode(String, utf8_encode_char(Char) ++ Accum).
+url_encode([Char|String], Accum)
+  when Char >=0, Char =< 255 ->
+    url_encode(String, [hex_char(Char rem 16), hex_char(Char div 16),$%|Accum]).
 
 url_encode_loose(Binary) when is_binary(Binary) ->
     url_encode_loose(binary_to_list(Binary));
@@ -77,5 +78,5 @@ utf8_encode_char(Char) when Char =< 16#7F ->
 encode_char(Char) ->
   [hex_char(Char rem 16), hex_char(Char div 16), $%].
 
-hex_char(C) when C < 10 -> $0 + C;
-hex_char(C) when C < 16 -> $A + C - 10.
+hex_char(C) when C >= 0, C =< 9 -> $0 + C;
+hex_char(C) when C >= 10, C =< 15 -> $A + C - 10.
